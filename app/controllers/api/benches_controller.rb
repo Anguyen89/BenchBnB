@@ -6,7 +6,7 @@ class Api::BenchesController < ApplicationController
 
     def create
       bench = Bench.create!(bench_params)
-      render json: bench
+      render :show
     end
 
     def bench_params
