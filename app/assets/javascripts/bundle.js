@@ -49,10 +49,10 @@
 	// BenchStore = require('./stores/benchStore.js');
 	// ClientActions = require('./actions/ClientActions');
 	// ApiUtil = require('./util/api_util');
-	var Index = __webpack_require__(196);
+	var Search = __webpack_require__(197);
 	
 	document.addEventListener("DOMContentLoaded", function () {
-	  ReactDOM.render(React.createElement(Index, null), document.getElementById('root'));
+	  ReactDOM.render(React.createElement(Search, null), document.getElementById('root'));
 	});
 
 /***/ },
@@ -27047,6 +27047,49 @@
 	      null,
 	      benches
 	    );
+	  }
+	});
+
+/***/ },
+/* 197 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	var Map = __webpack_require__(198);
+	var Index = __webpack_require__(196);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(Map, null),
+	      React.createElement(Index, null)
+	    );
+	  }
+	});
+
+/***/ },
+/* 198 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var React = __webpack_require__(1);
+	
+	module.exports = React.createClass({
+	  displayName: "exports",
+	
+	  componentDidMount: function () {
+	    var mapDOMNode = this.refs.map;
+	    var mapOptions = {
+	      center: { lat: 37.7758, lng: -122.435 },
+	      zoom: 12
+	    };
+	    this.map = new google.maps.Map(mapDOMNode, mapOptions);
+	  },
+	  render: function () {
+	    return React.createElement("div", { id: "map", ref: "map" });
 	  }
 	});
 

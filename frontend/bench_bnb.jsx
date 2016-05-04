@@ -3,9 +3,9 @@ var ReactDOM = require('react-dom');
 // BenchStore = require('./stores/benchStore.js');
 // ClientActions = require('./actions/ClientActions');
 // ApiUtil = require('./util/api_util');
-var Index = require('./components/index');
+var Search = require('./components/search');
 
 
 document.addEventListener("DOMContentLoaded", function(){
-  ReactDOM.render(<Index />, document.getElementById('root'));
+  ReactDOM.render(<Search />, document.getElementById('root'));
 });
