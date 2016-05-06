@@ -49,7 +49,7 @@
 	// BenchStore = require('./stores/benchStore.js');
 	// ClientActions = require('./actions/ClientActions');
 	// ApiUtil = require('./util/api_util');
-	var Search = __webpack_require__(197);
+	var Search = __webpack_require__(168);
 	
 	document.addEventListener("DOMContentLoaded", function () {
 	  ReactDOM.render(React.createElement(Search, null), document.getElementById('root'));
@@ -20147,10 +20147,174 @@
 /* 168 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var Store = __webpack_require__(169).Store;
-	var AppDispatcher = __webpack_require__(195);
+	var React = __webpack_require__(1);
+	var Map = __webpack_require__(169);
+	var Index = __webpack_require__(193);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	  render: function () {
+	    return React.createElement(
+	      'div',
+	      null,
+	      React.createElement(Map, null),
+	      React.createElement(Index, null)
+	    );
+	  }
+	});
+
+/***/ },
+/* 169 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var BenchStore = __webpack_require__(170);
+	var React = __webpack_require__(1);
+	
+	module.exports = React.createClass({
+	  displayName: 'exports',
+	
+	  componentDidMount: function () {
+	    this.markers = [];
+	    var mapDOMNode = this.refs.map;
+	    var mapOptions = {
+	      center: { lat: 37.7758, lng: -122.435 },
+	      zoom: 12
+	    };
+	
+	    this.map = new google.maps.Map(mapDOMNode, mapOptions);
+	    this.mapListener = BenchStore.addListener(this._onChange);
+	  },
+	
+	  _onChange: function () {
+	    this.markers.forEach(function (marker) {
+	      marker.setMap(null);
+	    });
+	
+	    this.markers = [];
+	    var benches = BenchStore.all();
+	
+	    for (var id in benches) {
+	      if (benches.hasOwnProperty(id)) {
+	        var bench = benches[id];
+	        var marker = new google.maps.Marker({
+	          position: { lat: bench.lat, lng: bench.lng },
+	          map: this.map,
+	          title: bench.description
+	        });
+	        this.markers.push(marker);
+	      }
+	    }
+	    console.log(this.markers);
+	  },
+	
+	  render: function () {
+	    return React.createElement('div', { id: 'map', ref: 'map' });
+	  }
+	});
+	
+	// var React = require("react");
+	// var BenchStore = require("../stores/benchStore");
+	// var ClientActions = require("../actions/clientActions");
+	// var hashHistory = require("react-router").hashHistory;
+	//
+	// var Map = React.createClass({
+	//
+	//   componentDidMount: function () {
+	//     this.markers = [];
+	//
+	//     var mapDOMNode = this.refs.map;
+	//     var mapOptions = {
+	//       center: {lat: 37.7758, lng: -122.435},
+	//       zoom: 13
+	//     };
+	//     this.map = new google.maps.Map(mapDOMNode, mapOptions);
+	//
+	//     this.map.addListener('idle', function () {
+	//       var LatLngBounds = this.map.getBounds();
+	//
+	//       var northEast = {
+	//         lat: LatLngBounds.getNorthEast().lat(),
+	//         lng: LatLngBounds.getNorthEast().lng()
+	//       };
+	//
+	//       var southWest = {
+	//         lat: LatLngBounds.getSouthWest().lat(),
+	//         lng: LatLngBounds.getSouthWest().lng()
+	//       };
+	//
+	//       var bounds = {
+	//         northEast: northEast,
+	//         southWest: southWest
+	//       };
+	//
+	//       ClientActions.fetchBenches(bounds);
+	//     }.bind(this));
+	//
+	//     this.map.addListener('click', this.handleClick);
+	//
+	//     this.listener = BenchStore.addListener(this._onChange);
+	//   },
+	//
+	//
+	//
+	//   _onChange: function () {
+	//     this.markers.forEach(function(marker) {
+	//       marker.setMap(null);
+	//     });
+	//
+	//     this.markers = [];
+	//     var benches = BenchStore.all();
+	//
+	//     for (var id in benches) {
+	//       if (benches.hasOwnProperty(id)) {
+	//         var bench = benches[id];
+	//         var marker = new google.maps.Marker({
+	//           position: {lat: bench.lat, lng: bench.lng },
+	//           map: this.map,
+	//           title: bench.description
+	//         });
+	//         this.markers.push(marker);
+	//       }
+	//     }
+	//   },
+	//
+	//   componentWillUnmount: function () {
+	//     this.listener.remove();
+	//   },
+	//
+	//   handleClick: function (event) {
+	//     var lat = event.latLng.lat();
+	//     var lng = event.latLng.lng();
+	//
+	//     var coords = { lat: lat, lng: lng };
+	//
+	//     hashHistory.push({
+	//       pathname: "benches/new",
+	//       query: coords
+	//     });
+	//
+	//   },
+	//
+	//   render: function () {
+	//     return (
+	//       <div id="map" ref="map" >
+	//       </div>
+	//     );
+	//   }
+	// });
+	//
+	//
+	// module.exports = Map;
+
+/***/ },
+/* 170 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Store = __webpack_require__(171).Store;
+	var AppDispatcher = __webpack_require__(189);
 	var _benches = {};
-	var BenchConstants = __webpack_require__(193);
+	var BenchConstants = __webpack_require__(192);
 	var BenchStore = new Store(AppDispatcher);
 	
 	BenchStore.all = function () {
@@ -20176,7 +20340,7 @@
 	module.exports = BenchStore;
 
 /***/ },
-/* 169 */
+/* 171 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -20188,15 +20352,15 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Container = __webpack_require__(170);
-	module.exports.MapStore = __webpack_require__(174);
-	module.exports.Mixin = __webpack_require__(186);
-	module.exports.ReduceStore = __webpack_require__(175);
-	module.exports.Store = __webpack_require__(176);
+	module.exports.Container = __webpack_require__(172);
+	module.exports.MapStore = __webpack_require__(176);
+	module.exports.Mixin = __webpack_require__(188);
+	module.exports.ReduceStore = __webpack_require__(177);
+	module.exports.Store = __webpack_require__(178);
 
 
 /***/ },
-/* 170 */
+/* 172 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20218,10 +20382,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStoreGroup = __webpack_require__(171);
+	var FluxStoreGroup = __webpack_require__(173);
 	
-	var invariant = __webpack_require__(172);
-	var shallowEqual = __webpack_require__(173);
+	var invariant = __webpack_require__(174);
+	var shallowEqual = __webpack_require__(175);
 	
 	var DEFAULT_OPTIONS = {
 	  pure: true,
@@ -20379,7 +20543,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 171 */
+/* 173 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20398,7 +20562,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(172);
+	var invariant = __webpack_require__(174);
 	
 	/**
 	 * FluxStoreGroup allows you to execute a callback on every dispatch after
@@ -20460,7 +20624,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 172 */
+/* 174 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20515,7 +20679,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 173 */
+/* 175 */
 /***/ function(module, exports) {
 
 	/**
@@ -20570,7 +20734,7 @@
 	module.exports = shallowEqual;
 
 /***/ },
-/* 174 */
+/* 176 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20591,10 +20755,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxReduceStore = __webpack_require__(175);
-	var Immutable = __webpack_require__(185);
+	var FluxReduceStore = __webpack_require__(177);
+	var Immutable = __webpack_require__(187);
 	
-	var invariant = __webpack_require__(172);
+	var invariant = __webpack_require__(174);
 	
 	/**
 	 * This is a simple store. It allows caching key value pairs. An implementation
@@ -20720,7 +20884,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 175 */
+/* 177 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20741,10 +20905,10 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var FluxStore = __webpack_require__(176);
+	var FluxStore = __webpack_require__(178);
 	
-	var abstractMethod = __webpack_require__(184);
-	var invariant = __webpack_require__(172);
+	var abstractMethod = __webpack_require__(186);
+	var invariant = __webpack_require__(174);
 	
 	var FluxReduceStore = (function (_FluxStore) {
 	  _inherits(FluxReduceStore, _FluxStore);
@@ -20827,7 +20991,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 176 */
+/* 178 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -20846,11 +21010,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var _require = __webpack_require__(177);
+	var _require = __webpack_require__(179);
 	
 	var EventEmitter = _require.EventEmitter;
 	
-	var invariant = __webpack_require__(172);
+	var invariant = __webpack_require__(174);
 	
 	/**
 	 * This class should be extended by the stores in your application, like so:
@@ -21010,7 +21174,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 177 */
+/* 179 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21023,14 +21187,14 @@
 	 */
 	
 	var fbemitter = {
-	  EventEmitter: __webpack_require__(178)
+	  EventEmitter: __webpack_require__(180)
 	};
 	
 	module.exports = fbemitter;
 
 
 /***/ },
-/* 178 */
+/* 180 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21049,11 +21213,11 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var EmitterSubscription = __webpack_require__(179);
-	var EventSubscriptionVendor = __webpack_require__(181);
+	var EmitterSubscription = __webpack_require__(181);
+	var EventSubscriptionVendor = __webpack_require__(183);
 	
-	var emptyFunction = __webpack_require__(183);
-	var invariant = __webpack_require__(182);
+	var emptyFunction = __webpack_require__(185);
+	var invariant = __webpack_require__(184);
 	
 	/**
 	 * @class BaseEventEmitter
@@ -21227,7 +21391,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 179 */
+/* 181 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -21248,7 +21412,7 @@
 	
 	function _inherits(subClass, superClass) { if (typeof superClass !== 'function' && superClass !== null) { throw new TypeError('Super expression must either be null or a function, not ' + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 	
-	var EventSubscription = __webpack_require__(180);
+	var EventSubscription = __webpack_require__(182);
 	
 	/**
 	 * EmitterSubscription represents a subscription with listener and context data.
@@ -21280,7 +21444,7 @@
 	module.exports = EmitterSubscription;
 
 /***/ },
-/* 180 */
+/* 182 */
 /***/ function(module, exports) {
 
 	/**
@@ -21334,7 +21498,7 @@
 	module.exports = EventSubscription;
 
 /***/ },
-/* 181 */
+/* 183 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21353,7 +21517,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(182);
+	var invariant = __webpack_require__(184);
 	
 	/**
 	 * EventSubscriptionVendor stores a set of EventSubscriptions that are
@@ -21443,7 +21607,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 182 */
+/* 184 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21498,7 +21662,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 183 */
+/* 185 */
 /***/ function(module, exports) {
 
 	/**
@@ -21540,7 +21704,7 @@
 	module.exports = emptyFunction;
 
 /***/ },
-/* 184 */
+/* 186 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -21557,7 +21721,7 @@
 	
 	'use strict';
 	
-	var invariant = __webpack_require__(172);
+	var invariant = __webpack_require__(174);
 	
 	function abstractMethod(className, methodName) {
 	   true ? process.env.NODE_ENV !== 'production' ? invariant(false, 'Subclasses of %s must override %s() with their own implementation.', className, methodName) : invariant(false) : undefined;
@@ -21567,7 +21731,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 185 */
+/* 187 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26551,7 +26715,7 @@
 	}));
 
 /***/ },
-/* 186 */
+/* 188 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26568,9 +26732,9 @@
 	
 	'use strict';
 	
-	var FluxStoreGroup = __webpack_require__(171);
+	var FluxStoreGroup = __webpack_require__(173);
 	
-	var invariant = __webpack_require__(172);
+	var invariant = __webpack_require__(174);
 	
 	/**
 	 * `FluxContainer` should be preferred over this mixin, but it requires using
@@ -26674,8 +26838,14 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 187 */,
-/* 188 */
+/* 189 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(190).Dispatcher;
+	module.exports = new Dispatcher();
+
+/***/ },
+/* 190 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/**
@@ -26687,11 +26857,11 @@
 	 * of patent rights can be found in the PATENTS file in the same directory.
 	 */
 	
-	module.exports.Dispatcher = __webpack_require__(189);
+	module.exports.Dispatcher = __webpack_require__(191);
 
 
 /***/ },
-/* 189 */
+/* 191 */
 /***/ function(module, exports, __webpack_require__) {
 
 	/* WEBPACK VAR INJECTION */(function(process) {/**
@@ -26713,7 +26883,7 @@
 	
 	function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError('Cannot call a class as a function'); } }
 	
-	var invariant = __webpack_require__(172);
+	var invariant = __webpack_require__(174);
 	
 	var _prefix = 'ID_';
 	
@@ -26928,45 +27098,7 @@
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(3)))
 
 /***/ },
-/* 190 */,
-/* 191 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ApiUtil = __webpack_require__(192);
-	
-	var ClientActions = {
-	
-	  fetchBenches: function () {
-	    ApiUtil.fetchBenches();
-	  }
-	
-	};
-	
-	module.exports = ClientActions;
-
-/***/ },
 /* 192 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var ServerActions = __webpack_require__(194);
-	
-	var ApiUtil = {
-	  fetchBenches: function () {
-	    $.ajax({
-	      method: 'GET',
-	      url: '/api/benches',
-	      success: function (benches) {
-	        ServerActions.receiveAll(benches);
-	      }
-	    });
-	  }
-	
-	};
-	
-	module.exports = ApiUtil;
-
-/***/ },
-/* 193 */
 /***/ function(module, exports) {
 
 	
@@ -26975,37 +27107,12 @@
 	};
 
 /***/ },
-/* 194 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Dispatcher = __webpack_require__(195);
-	var BenchConstants = __webpack_require__(193);
-	
-	var ServerActions = {
-	  receiveAll: function (benches) {
-	    Dispatcher.dispatch({
-	      actionType: BenchConstants.BENCHES_RECEIVED,
-	      benches: benches
-	    });
-	  }
-	};
-	
-	module.exports = ServerActions;
-
-/***/ },
-/* 195 */
-/***/ function(module, exports, __webpack_require__) {
-
-	var Dispatcher = __webpack_require__(188).Dispatcher;
-	module.exports = new Dispatcher();
-
-/***/ },
-/* 196 */
+/* 193 */
 /***/ function(module, exports, __webpack_require__) {
 
 	var React = __webpack_require__(1);
-	var BenchStore = __webpack_require__(168);
-	var ClientActions = __webpack_require__(191);
+	var BenchStore = __webpack_require__(170);
+	var ClientActions = __webpack_require__(194);
 	
 	module.exports = React.createClass({
 	  displayName: 'exports',
@@ -27051,47 +27158,59 @@
 	});
 
 /***/ },
-/* 197 */
+/* 194 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
-	var Map = __webpack_require__(198);
-	var Index = __webpack_require__(196);
+	var ApiUtil = __webpack_require__(195);
 	
-	module.exports = React.createClass({
-	  displayName: 'exports',
+	var ClientActions = {
 	
-	  render: function () {
-	    return React.createElement(
-	      'div',
-	      null,
-	      React.createElement(Map, null),
-	      React.createElement(Index, null)
-	    );
+	  fetchBenches: function () {
+	    ApiUtil.fetchBenches();
 	  }
-	});
+	
+	};
+	
+	module.exports = ClientActions;
 
 /***/ },
-/* 198 */
+/* 195 */
 /***/ function(module, exports, __webpack_require__) {
 
-	var React = __webpack_require__(1);
+	var ServerActions = __webpack_require__(196);
 	
-	module.exports = React.createClass({
-	  displayName: "exports",
-	
-	  componentDidMount: function () {
-	    var mapDOMNode = this.refs.map;
-	    var mapOptions = {
-	      center: { lat: 37.7758, lng: -122.435 },
-	      zoom: 12
-	    };
-	    this.map = new google.maps.Map(mapDOMNode, mapOptions);
-	  },
-	  render: function () {
-	    return React.createElement("div", { id: "map", ref: "map" });
+	var ApiUtil = {
+	  fetchBenches: function () {
+	    $.ajax({
+	      method: 'GET',
+	      url: '/api/benches',
+	      success: function (benches) {
+	        ServerActions.receiveAll(benches);
+	      }
+	    });
 	  }
-	});
+	
+	};
+	
+	module.exports = ApiUtil;
+
+/***/ },
+/* 196 */
+/***/ function(module, exports, __webpack_require__) {
+
+	var Dispatcher = __webpack_require__(189);
+	var BenchConstants = __webpack_require__(192);
+	
+	var ServerActions = {
+	  receiveAll: function (benches) {
+	    Dispatcher.dispatch({
+	      actionType: BenchConstants.BENCHES_RECEIVED,
+	      benches: benches
+	    });
+	  }
+	};
+	
+	module.exports = ServerActions;
 
 /***/ }
 /******/ ]);
